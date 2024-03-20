@@ -9,14 +9,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity
 @Getter
 @Setter
 @ToString
+@Entity
 public class UserRole {
 
   @Id
@@ -34,5 +35,14 @@ public class UserRole {
   @JoinColumn(name = "role_id")
   private Role role;
 
+  private LocalDateTime createdAt;
 
+  public static UserRole create(Role role) {
+
+    UserRole userRole = new UserRole();
+    userRole.setRole(role);
+    userRole.setCreatedAt(LocalDateTime.now());
+
+    return userRole;
+  }
 }
