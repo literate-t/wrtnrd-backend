@@ -1,11 +1,13 @@
 package io.taetae.wrtnrd.domain.model;
 
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+
 public interface ProviderUser {
 
-  String getId();
+  Long getId();
   String getUsername();
   String getPassword();
-  String getEmail();
-
   String getProvider();
+  List<? extends GrantedAuthority> getAuthorities();
 }
