@@ -12,8 +12,8 @@ public class WrtnrdBackendApplication {
     SpringApplication.run(WrtnrdBackendApplication.class, args);
   }
 
-  @Bean
-  public InitTestData initTestData(EntityManager entityManager) {
-    return new InitTestData(entityManager);
-  }
+//  @Bean
+//  public InitTestData initTestData(EntityManager entityManager) {
+//    return new InitTestData(entityManager);
+//  }
 }
