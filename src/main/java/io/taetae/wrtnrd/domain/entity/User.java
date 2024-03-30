@@ -58,6 +58,10 @@ public class User {
     userRoles.add(userRole);
   }
 
+  public void changePassword(String encoded) {
+    password = encoded;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
