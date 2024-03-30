@@ -1,3 +1,5 @@
+server:
+  port: 8081
 spring:
   application:
     name: wrtnrd-backend
@@ -17,3 +19,22 @@ spring:
       enabled: true
     restart:
       enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: wrtnrd-client-app
+            client-secret: 7bmVQx22U2S0GnBD2MeTfZRSZ7RVZlHB
+            authorization-grant-type: client_credentials
+            client-authentication-method: client_secret_basic
+            redirect-uri: http://localhost:8081/callback
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/wrtnrd
+            token-uri: ${spring.security.oauth2.client.provider.keycloak.issuer-uri}/protocol/openid-connect/token
+logging:
+  level:
+    org.springframework.security: trace
+    root: debug
+#    web: debug
