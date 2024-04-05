@@ -1,14 +1,17 @@
 package io.taetae.wrtnrd.domain.entity;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
 
 import io.taetae.wrtnrd.domain.dto.UserDto;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,10 @@ public class User {
   @ToString.Exclude
   @OneToMany(mappedBy = "user", cascade = ALL)
   List<UserRole> userRoles = new ArrayList<>();
+
+  @OneToOne(fetch = LAZY)
+  @Column(name = "user_id")
+  private Auth auth;
 
   public User(UserDto userDto, UserRole... userRoles) {
 
