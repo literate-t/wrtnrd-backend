@@ -7,15 +7,23 @@ import org.springframework.security.core.userdetails.User;
 
 public class PrincipalUser extends User {
 
-  public PrincipalUser(String username, String password,
+  io.taetae.wrtnrd.domain.entity.User user;
+
+  public PrincipalUser(io.taetae.wrtnrd.domain.entity.User user,
       Collection<? extends GrantedAuthority> authorities) {
-    super(username, password, authorities);
+    super(user.getUsername(), user.getPassword(), authorities);
+    this.user = user;
   }
 
-  public PrincipalUser(String username, String password, boolean enabled, boolean accountNonExpired,
+  public PrincipalUser(io.taetae.wrtnrd.domain.entity.User user,boolean enabled, boolean accountNonExpired,
       boolean credentialsNonExpired, boolean accountNonLocked,
       Collection<? extends GrantedAuthority> authorities) {
-    super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,
+    super(user.getUsername(), user.getPassword(), enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,
         authorities);
+    this.user = user;
+  }
+
+  public Long getId() {
+    return user.getId();
   }
 }
