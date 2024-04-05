@@ -26,7 +26,7 @@ public class CustomUserDetailsService extends AbstractUserService implements Use
   @Transactional
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username).orElse(new User());
+    User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     if (null == user.getId()) {
       throw new UsernameNotFoundException("User not found exception");
     }
@@ -38,6 +38,6 @@ public class CustomUserDetailsService extends AbstractUserService implements Use
       roles.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
     }
 
-    return new PrincipalUser(user.getUsername(), user.getPassword(), roles);
+    return new PrincipalUser(user, roles);
   }
 }
