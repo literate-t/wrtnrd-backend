@@ -24,6 +24,6 @@ logging:
 jwt:
   secret-key: 48393d37632532506c37787a22792627435255242b5348535170566666
   access-token:
-    expiry-time: 1800000 # 30minutes
+    expiration: 1800000 # 30minutes
   refresh-token:
-    expiry-time: 7200000 # 2 hours
+    expiration: 7200000 # 2 hours
