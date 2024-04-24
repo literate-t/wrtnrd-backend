@@ -6,49 +6,25 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Role {
 
   @Id @GeneratedValue(strategy = SEQUENCE)
   @Column(name = "role_Id")
   private Long id;
   private String name;
-  private String desc;
+  private String description;
 
-  @OneToMany(mappedBy = "role")
-  List<UserRole> userRoles = new ArrayList<>();
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Role role = (Role) o;
-    return Objects.equals(getId(), role.getId()) && Objects.equals(getName(),
-        role.getName()) && Objects.equals(getDesc(), role.getDesc());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getName(), getDesc());
-  }
-
-  @Override
-  public String toString() {
-    return name;
+  public static Role create(String name, String description) {
+    return new Role(null, name, description);
   }
 }
