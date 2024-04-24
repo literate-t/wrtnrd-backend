@@ -9,17 +9,23 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
-@ToString
+@Data
+@Entity
 public class User implements UserDetails {
 
   @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -33,29 +39,6 @@ public class User implements UserDetails {
   @ToString.Exclude
   @OneToMany(mappedBy = "user")
   List<UserRole> userRoles = new ArrayList<>();
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    User user = (User) o;
-    return Objects.equals(getId(), user.getId()) && Objects.equals(getPassword(), user.getPassword())
-        && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(
-        getClientRegistrationId(), user.getClientRegistrationId()) && Objects.equals(
-        getProvider(), user.getProvider()) && Objects.equals(getUserRoles(),
-        user.getUserRoles());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId(), getPassword(), getEmail(),
-        getClientRegistrationId(),
-        getProvider(), getUserRoles());
-  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
