@@ -9,6 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +57,19 @@ public class JwtService {
     return extractClaim(token, Claims::getExpiration);
   }
 
+  public String generateAccessToken(UserDetails userDetails) {
+
+    return generateAccessToken(new HashMap<>(), userDetails);
+  }
+
   public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 
     return buildToken(extraClaims, userDetails, accessTokenExpiration);
+  }
+
+  public String generateRefreshToken(UserDetails userDetails) {
+
+    return generateRefreshToken(new HashMap<>(), userDetails);
   }
 
   public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
