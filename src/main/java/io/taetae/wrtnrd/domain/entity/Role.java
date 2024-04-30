@@ -21,8 +21,8 @@ public class Role {
   @Id @GeneratedValue(strategy = SEQUENCE)
   @Column(name = "role_Id")
   private Long id;
-  private String name;
-  private String description;
+  private String roleName;
+  private String roleDescription;
 
   public static Role create(String name, String description) {
     return new Role(null, name, description);
