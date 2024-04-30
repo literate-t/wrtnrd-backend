@@ -9,14 +9,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Entity
 @Getter
-@Setter
-@ToString
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 public class UserRole {
 
   @Id
@@ -30,9 +34,13 @@ public class UserRole {
   private User user;
 
   @ToString.Exclude
-  @ManyToOne(fetch = LAZY)
+  @ManyToOne
   @JoinColumn(name = "role_id")
   private Role role;
 
+  private LocalDateTime createdAt;
 
+  public static UserRole create(Role role) {
+    return new UserRole(null, null, role, LocalDateTime.now());
+  }
 }
