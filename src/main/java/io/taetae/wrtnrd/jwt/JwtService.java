@@ -12,22 +12,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
-@Component
+@Service
 public class JwtService {
 
   @Value("${jwt.secret-key}")
   private String secretKey;
 
-  @Value("${jwt.access-token.expiry-time}")
+  @Value("${jwt.access-token.expiration}")
   private Long accessTokenExpiration;
 
-  @Value("${jwt.refresh-token.expiry-time}")
+  @Value("${jwt.refresh-token.expiration}")
   private Long refreshTokenExpiration;
 
   public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -43,7 +41,7 @@ public class JwtService {
     return parserBuilder()
         .setSigningKey(getSignInKey())
         .build()
-        .parseClaimsJwt(token)
+        .parseClaimsJws(token)
         .getBody();
   }
 
