@@ -35,4 +35,11 @@ public class Token {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  public void invalidate() {
+    accessExpired = true;
+    accessRevoked = true;
+    refreshExpired = true;
+    refreshRevoked = true;
+  }
 }
