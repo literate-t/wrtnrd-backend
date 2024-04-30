@@ -1,5 +1,7 @@
 package io.taetae.wrtnrd.domain.entity;
 
+import static jakarta.persistence.FetchType.EAGER;
+
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @Getter
 @Data
-@Entity
+@Entity(name = "USERS")
 public class User implements UserDetails {
 
   @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -37,13 +39,13 @@ public class User implements UserDetails {
   @Nullable
   private String provider;
   @ToString.Exclude
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", fetch = EAGER)
   List<UserRole> userRoles = new ArrayList<>();
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return getUserRoles().stream()
-        .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getName()))
+        .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
         .collect(Collectors.toList());
   }
 
@@ -54,21 +56,21 @@ public class User implements UserDetails {
 
   @Override
   public boolean isAccountNonExpired() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isCredentialsNonExpired() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isEnabled() {
-    return false;
+    return true;
   }
 }
