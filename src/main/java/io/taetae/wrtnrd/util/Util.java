@@ -33,6 +33,18 @@ public class Util {
     return Optional.empty();
   }
 
+  public static Optional<Cookie> getCookie(HttpServletRequest request, String cookieName) {
+
+    Cookie[] cookies = request.getCookies();
+    if (null != cookies && 0 < cookies.length) {
+      return Arrays.stream(cookies)
+          .filter(cookie -> cookieName.equals(cookie.getName()))
+          .findFirst();
+    }
+
+    return Optional.empty();
+  }
+
   public static void sendResponse(HttpServletResponse response, Object value) throws IOException {
     objectMapper.writeValue(response.getOutputStream(), value);
   }
