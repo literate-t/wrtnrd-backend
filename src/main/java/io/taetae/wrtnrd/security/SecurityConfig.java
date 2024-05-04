@@ -3,6 +3,7 @@ package io.taetae.wrtnrd.security;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import io.taetae.wrtnrd.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,8 @@ public class SecurityConfig {
 
     http.securityMatcher("/api/auth/**")
         .authorizeHttpRequests(registry -> {
-          registry.requestMatchers("/api/auth/register", "/api/auth/authenticate", "/api/auth/refresh-token").permitAll()
+          registry.requestMatchers("/api/auth/register", "/api/auth/authenticate",
+                  "/api/auth/new-token", "/api/auth/delete-tokens").permitAll()
               .anyRequest().authenticated();
         });
 
@@ -38,6 +40,9 @@ public class SecurityConfig {
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .cors((config -> config.configurationSource(corsConfigurationSource())))
+        .exceptionHandling(config -> config.authenticationEntryPoint(((request, response, authException) -> {
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied: Authentication is required to access this resource.");
+        })))
 // TODO
 //        .logout(config -> config
 //            .addLogoutHandler(null)
