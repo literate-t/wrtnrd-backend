@@ -31,6 +31,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -122,55 +123,53 @@ public class AuthenticationService {
     tokenRepository.saveAll(allTokens);
   }
 
-  public void refreshToken(HttpServletRequest request, HttpServletResponse response)
+  @Transactional
+  public AuthenticationResponseDto refreshToken(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-
-    String refreshToken = null;
+    AuthenticationResponseDto responseDto = null;
 
     try {
-      refreshToken = Util.checkCookieAndGetValue(request, REFRESH_TOKEN);
+      String refreshToken = Util.checkCookieAndGetValue(request, REFRESH_TOKEN);
 
       // if token is expired, is throws an exception
       String username = jwtService.extractUsername(refreshToken);
 
       if (null != username) {
-        refreshAllToken(username, refreshToken, request, response);
+        responseDto = refreshAllToken(username);
       }
     } catch (BadRequestException e) {
       Util.sendResponse(response, ResponseEntity.badRequest());
     }
+
+    return responseDto;
   }
 
-  private void refreshAllToken(String username, String refreshToken, HttpServletRequest request, HttpServletResponse response)
+  private AuthenticationResponseDto refreshAllToken(String username)
       throws IOException {
 
     User user = findUser(username);
 
-    if (isTokenAuthenticationValid(refreshToken, user)) {
+//    if (isRefreshTokenValid(refreshToken, user)) {
+      revokeAllPreviousUserToken(user);
 
       String newAccessToken = jwtService.generateAccessToken(user);
       String newRefreshToken = jwtService.generateRefreshToken(user);
 
-      revokeAllPreviousUserToken(user);
       saveUserToken(user, newAccessToken, newRefreshToken);
 
-      AuthenticationResponseDto responseDto = new AuthenticationResponseDto(
-          newAccessToken, newRefreshToken);
+      return new AuthenticationResponseDto(newAccessToken, newRefreshToken);
+//    }
 
-      Util.sendResponse(response, responseDto);
-    }
+//    return null;
   }
 
   private User findUser(String username) {
     return userRepository.findByEmail(username).orElseThrow();
   }
 
-  private boolean isTokenAuthenticationValid(String refreshToken, UserDetails user) {
+  private boolean isRefreshTokenValid(String refreshToken, UserDetails user) {
 
-    boolean isStoredTokenValid = tokenRepository.findByRefreshToken(refreshToken)
-        .map(token -> !token.isRefreshExpired() && !token.isRefreshRevoked()).orElse(false);
-
-    return isStoredTokenValid && jwtService.isTokenValid(refreshToken, user);
+    return jwtService.isRefreshTokenValid(refreshToken, user);
   }
 
   public boolean isDuplicateEmail(String email) {
