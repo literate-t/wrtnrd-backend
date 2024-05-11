@@ -149,7 +149,6 @@ public class AuthenticationService {
 
     User user = findUser(username);
 
-//    if (isRefreshTokenValid(refreshToken, user)) {
       revokeAllPreviousUserToken(user);
 
       String newAccessToken = jwtService.generateAccessToken(user);
@@ -158,9 +157,6 @@ public class AuthenticationService {
       saveUserToken(user, newAccessToken, newRefreshToken);
 
       return new AuthenticationResponseDto(newAccessToken, newRefreshToken);
-//    }
-
-//    return null;
   }
 
   private User findUser(String username) {
