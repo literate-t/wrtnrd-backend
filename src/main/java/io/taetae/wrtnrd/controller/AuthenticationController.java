@@ -1,5 +1,7 @@
 package io.taetae.wrtnrd.controller;
 
+import static io.taetae.wrtnrd.util.Constant.ACCESS_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 import io.taetae.wrtnrd.domain.dto.AuthenticationRequestDto;
@@ -44,15 +46,29 @@ public class AuthenticationController {
     Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
     Cookie refreshTokenCookie = new Cookie("rf", responseDto.refreshToken());
 
+    accessTokenCookie.setPath("/");
+    refreshTokenCookie.setPath("/");
+
     response.addCookie(accessTokenCookie);
     response.addCookie(refreshTokenCookie);
 
     response.setStatus(SC_OK);
   }
 
-  @PostMapping("/refresh-token")
-  public void refresh(HttpServletRequest request, HttpServletResponse response/*, @RequestBody AuthenticationRequestDto requestDto*/)
+  // TODO remove the http-dependent code from service
+  @PostMapping("/new-tokens")
+  public void newTokens(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    authenticationService.refreshToken(request, response);
+
+    AuthenticationResponseDto responseDto = authenticationService.refreshToken(request, response);
+
+    Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, responseDto.accessToken());
+    Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, responseDto.refreshToken());
+
+    accessTokenCookie.setPath("/");
+    refreshTokenCookie.setPath("/");
+
+    response.addCookie(accessTokenCookie);
+    response.addCookie(refreshTokenCookie);
   }
 }
