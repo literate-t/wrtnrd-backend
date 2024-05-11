@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// TODO token 필드를 하나만 두는 대신에 어떤 토큰인지 타입을 넣을 것
+// ac, rf 검증 로직이 거의 동일한데 지금 구조에선 검증 로직을 각각 둬야 하는 불필요함이 존재
 @Data
 @Builder
 @AllArgsConstructor
