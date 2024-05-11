@@ -7,17 +7,24 @@ import static java.lang.System.currentTimeMillis;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.taetae.wrtnrd.repository.TokenRepository;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class JwtService {
+
+  private final UserDetailsService customUserDetailsService;
+  private final TokenRepository tokenRepository;
 
   @Value("${jwt.secret-key}")
   private String secretKey;
@@ -86,7 +93,7 @@ public class JwtService {
         .compact();
   }
 
-  public boolean isTokenValid(String token, UserDetails userDetails) {
+  private boolean isTokenValid(String token, UserDetails userDetails) {
 
     final String extractedUsername = extractUsername(token);
 
@@ -96,5 +103,25 @@ public class JwtService {
   private Key getSignInKey() {
 
     return Keys.hmacShaKeyFor(secretKey.getBytes());
+  }
+
+  public UserDetails loadUserDetails(String userEmail) {
+    return customUserDetailsService.loadUserByUsername(userEmail);
+  }
+
+  public boolean isAccessTokenValid(String accessToken, UserDetails user) {
+
+    boolean isStoredAccessValid = tokenRepository.findFirstByAccessToken(accessToken)
+        .map(token -> !token.isAccessExpired() && !token.isAccessRevoked()).orElse(false);
+
+    return isStoredAccessValid && isTokenValid(accessToken, user);
+  }
+
+  public boolean isRefreshTokenValid(String refreshToken, UserDetails user) {
+
+    boolean isStoredRefreshValid = tokenRepository.findFirstByRefreshToken(refreshToken)
+        .map(token -> !token.isRefreshExpired() && !token.isRefreshRevoked()).orElse(false);
+
+    return isStoredRefreshValid && isTokenValid(refreshToken, user);
   }
 }
