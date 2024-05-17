@@ -1,5 +1,6 @@
 package io.taetae.wrtnrd;
 
+import io.taetae.wrtnrd.repository.PostRepository;
 import io.taetae.wrtnrd.repository.RoleRepository;
 import io.taetae.wrtnrd.repository.UserRepository;
 import io.taetae.wrtnrd.repository.UserRoleRepository;
@@ -18,7 +19,7 @@ public class WrtnrdBackendApplication {
 
   @Bean
   @Profile("dev")
-  public TestDataInit testDataInit(RoleRepository repository, UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
-    return new TestDataInit(repository, userRepository, userRoleRepository, passwordEncoder);
+  public TestDataInit testDataInit(RoleRepository repository, UserRepository userRepository, UserRoleRepository userRoleRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
+    return new TestDataInit(repository, userRepository, userRoleRepository, postRepository, passwordEncoder);
   }
 }
