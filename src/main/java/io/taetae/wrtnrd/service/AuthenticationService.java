@@ -92,7 +92,7 @@ public class AuthenticationService {
 
     saveUserToken(findUser, accessToken, refreshToken);
 
-    return new AuthenticationResponseDto(accessToken, refreshToken);
+    return new AuthenticationResponseDto(findUser, accessToken, refreshToken);
   }
 
   private void saveUserToken(User user, String accessToken, String refreshToken) {
