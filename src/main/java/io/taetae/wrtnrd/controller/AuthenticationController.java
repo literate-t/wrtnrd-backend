@@ -2,12 +2,13 @@ package io.taetae.wrtnrd.controller;
 
 import static io.taetae.wrtnrd.util.Constant.ACCESS_TOKEN;
 import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 import io.taetae.wrtnrd.domain.dto.AuthenticationRequestDto;
 import io.taetae.wrtnrd.domain.dto.AuthenticationResponseDto;
 import io.taetae.wrtnrd.domain.dto.RegisterRequestDto;
 import io.taetae.wrtnrd.domain.dto.RegisterResponseDto;
+import io.taetae.wrtnrd.domain.dto.UserResponseDto;
+import io.taetae.wrtnrd.domain.entity.User;
 import io.taetae.wrtnrd.service.AuthenticationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/authenticate")
-  public void authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDto requestDto) {
+  public ResponseEntity<UserResponseDto> authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDto requestDto) {
 
     AuthenticationResponseDto responseDto = authenticationService.authenticate(requestDto);
     Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
@@ -52,7 +53,9 @@ public class AuthenticationController {
     response.addCookie(accessTokenCookie);
     response.addCookie(refreshTokenCookie);
 
-    response.setStatus(SC_OK);
+    User user = responseDto.user();
+
+    return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail()));
   }
 
   // TODO remove the http-dependent code from service
