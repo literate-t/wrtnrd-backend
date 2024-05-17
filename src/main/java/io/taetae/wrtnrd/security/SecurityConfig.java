@@ -29,10 +29,10 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain apiConfig(HttpSecurity http) throws Exception {
 
-    http.securityMatcher("/api/auth/**")
+    http.securityMatcher("/api/**")
         .authorizeHttpRequests(registry -> {
           registry.requestMatchers("/api/auth/register", "/api/auth/authenticate",
-                  "/api/auth/new-token", "/api/auth/delete-tokens").permitAll()
+                  "/api/post/list").permitAll() // "/api/auth/new-token"
               .anyRequest().authenticated();
         });
 
