@@ -41,6 +41,8 @@ public class TestDataInit {
     User newUser = User.builder()
         .email("gaekoon@gmail.com")
         .password(passwordEncoder.encode("Rlaxogus@2022"))
+        .author("good author")
+        .description("good description")
         .userRoles(List.of(userRole))
         .build();
 
@@ -64,7 +66,6 @@ public class TestDataInit {
       Post newPost = Post.builder()
           .user(savedUser)
           .body(body)
-          .author(author + " " + i)
           .title(title + " " + i)
           .createdAt(LocalDateTime.now().toString())
           .build();

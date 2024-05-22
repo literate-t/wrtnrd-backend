@@ -29,7 +29,7 @@ public class PostController {
 
     List<PostResponseDto> list = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10))
         .map(
-            post -> new PostResponseDto(post.getId(), post.getTitle(), "nickname", "description", post.getBody(),
+            post -> new PostResponseDto(post.getId(), post.getTitle(), post.getUser().getAuthor(), post.getUser().getDescription(), post.getBody(),
                 post.getCreatedAt())).toList();
 
     return ResponseEntity.ok(list);
@@ -41,6 +41,6 @@ public class PostController {
 
     Post post = postService.save(postRequestDto);
 
-    return ResponseEntity.ok(new PostResponseDto(post.getId(), post.getTitle(), "nickname", "description", post.getBody(), post.getCreatedAt()));
+    return ResponseEntity.ok(new PostResponseDto(post.getId(), post.getTitle(), post.getUser().getAuthor(), post.getUser().getDescription(), post.getBody(), post.getCreatedAt()));
   }
 }

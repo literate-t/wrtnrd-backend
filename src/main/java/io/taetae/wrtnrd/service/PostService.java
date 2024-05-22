@@ -23,7 +23,6 @@ public class PostService {
     if (null != user) {
       // TODO User 엔티티에 nickname 추가하고 회원가입 때도 추가하고, author에 넣을 것
       Post newPost = Post.builder().user(user)
-          .author(null)
           .title(post.title())
           .body(post.body())
           .createdAt(post.createdAt())

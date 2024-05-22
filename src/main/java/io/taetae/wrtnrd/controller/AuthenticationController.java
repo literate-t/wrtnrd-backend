@@ -55,7 +55,7 @@ public class AuthenticationController {
 
     User user = responseDto.user();
 
-    return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail()));
+    return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail(), user.getAuthor()));
   }
 
   // TODO remove the http-dependent code from service

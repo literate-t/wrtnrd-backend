@@ -36,6 +36,10 @@ public class User implements UserDetails {
   private String email;
   @Column(nullable = false)
   private String password;
+  @Column(nullable = false)
+  private String author;
+  @Column(nullable = false)
+  private String description;
   @ToString.Exclude
   @OneToMany(mappedBy = "user", fetch = EAGER)
   List<UserRole> userRoles = new ArrayList<>();

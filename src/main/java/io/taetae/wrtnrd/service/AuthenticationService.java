@@ -63,6 +63,8 @@ public class AuthenticationService {
     User newUser = User.builder()
         .email(requestDto.username())
         .password(passwordEncoder.encode(requestDto.password()))
+        .author(requestDto.author())
+        .description(requestDto.description())
         .userRoles(List.of(userRole))
         .build();
 

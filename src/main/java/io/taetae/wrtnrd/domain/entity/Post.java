@@ -30,7 +30,6 @@ public class Post {
   private Long id;
 
   private String title;
-  private String author;
   @Column(columnDefinition = "TEXT")
   private String body;
   private String imagePath;
