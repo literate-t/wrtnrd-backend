@@ -7,6 +7,7 @@ import io.taetae.wrtnrd.repository.PostRepository;
 import io.taetae.wrtnrd.service.PostService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +27,12 @@ public class PostController {
   @GetMapping("/list")
   public ResponseEntity<List<PostResponseDto>> getAllPosts() {
 
-    List<PostResponseDto> postResponseDtoList = postRepository.findAll().stream()
-        .map(post -> new PostResponseDto(post.getTitle(), "nickname", "description", post.getBody(), post.getCreatedAt()))
-        .toList();
+    List<PostResponseDto> list = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10))
+        .map(
+            post -> new PostResponseDto(post.getId(), post.getTitle(), "nickname", "description", post.getBody(),
+                post.getCreatedAt())).toList();
 
-    return ResponseEntity.ok(postResponseDtoList);
+    return ResponseEntity.ok(list);
   }
 
   @Transactional
@@ -39,6 +41,6 @@ public class PostController {
 
     Post post = postService.save(postRequestDto);
 
-    return ResponseEntity.ok(new PostResponseDto(post.getTitle(), "nickname", "description", post.getBody(), post.getCreatedAt()));
+    return ResponseEntity.ok(new PostResponseDto(post.getId(), post.getTitle(), "nickname", "description", post.getBody(), post.getCreatedAt()));
   }
 }
