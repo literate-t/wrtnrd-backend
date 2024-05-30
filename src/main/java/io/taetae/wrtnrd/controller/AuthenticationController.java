@@ -1,20 +1,26 @@
 package io.taetae.wrtnrd.controller;
 
 import static io.taetae.wrtnrd.util.Constant.ACCESS_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.INTERNAL_SERVER_ERROR;
 import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.REVOKE_ALL_PREVIOUS_TOKENS;
+import static io.taetae.wrtnrd.util.Constant.USER_ID_EMPTY;
 
 import io.taetae.wrtnrd.domain.dto.AuthenticationRequestDto;
 import io.taetae.wrtnrd.domain.dto.AuthenticationResponseDto;
 import io.taetae.wrtnrd.domain.dto.RegisterRequestDto;
 import io.taetae.wrtnrd.domain.dto.RegisterResponseDto;
+import io.taetae.wrtnrd.domain.dto.UserRequestDto;
 import io.taetae.wrtnrd.domain.dto.UserResponseDto;
 import io.taetae.wrtnrd.domain.entity.User;
 import io.taetae.wrtnrd.service.AuthenticationService;
+import io.taetae.wrtnrd.util.Util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,5 +79,34 @@ public class AuthenticationController {
 
     response.addCookie(accessTokenCookie);
     response.addCookie(refreshTokenCookie);
+  }
+
+  @PostMapping("/revoke-all-tokens")
+  public ResponseEntity<String> revokeAllTokens(@RequestBody UserRequestDto userRequestDto, HttpServletRequest request, HttpServletResponse response) {
+
+    Util.getCookie(request, ACCESS_TOKEN).ifPresent(cookie -> {
+      cookie.setMaxAge(0);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+    });
+    Util.getCookie(request, REFRESH_TOKEN).ifPresent(cookie -> {
+      cookie.setMaxAge(0);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+    });
+
+    Long userId = userRequestDto.userId();
+    if (null == userId) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(USER_ID_EMPTY);
+    }
+
+    boolean result = authenticationService.revokeAllPreviousUserToken(userId);
+
+    if (result) {
+
+      return ResponseEntity.ok(REVOKE_ALL_PREVIOUS_TOKENS);
+    } else {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INTERNAL_SERVER_ERROR);
+    }
   }
 }
