@@ -13,7 +13,7 @@ import static io.taetae.wrtnrd.util.Constant.PASSWORD_CHECKED_SUCCESSFULLY;
 import static io.taetae.wrtnrd.util.Constant.PASSWORD_CHECK_FAILURE;
 import static io.taetae.wrtnrd.util.Constant.USER_NOT_FOUND_FROM_ACCESS_TOKEN;
 
-import io.taetae.wrtnrd.domain.dto.AuthorRequestDto;
+import io.taetae.wrtnrd.domain.dto.UserRequestDto;
 import io.taetae.wrtnrd.domain.dto.PasswordChangeDto;
 import io.taetae.wrtnrd.domain.dto.PasswordCheckDto;
 import io.taetae.wrtnrd.jwt.JwtService;
@@ -89,13 +89,13 @@ public class UserController {
   }
 
   @PostMapping("/check-author-duplicated")
-  public ResponseEntity<String> checkAuthorDuplicated(@RequestBody AuthorRequestDto authorRequestDto) {
+  public ResponseEntity<String> checkAuthorDuplicated(@RequestBody UserRequestDto userRequestDto) {
 
-    if (null == authorRequestDto.author() || authorRequestDto.author().isEmpty()) {
+    if (null == userRequestDto.author() || userRequestDto.author().isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(NO_PARAM_FROM_REQUEST);
     }
 
-    boolean result = userService.isAuthorAvailable(authorRequestDto.author());
+    boolean result = userService.isAuthorAvailable(userRequestDto.author());
     if (result) {
       return ResponseEntity.ok(AVAILABLE_AUTHOR);
     } else {
@@ -104,13 +104,13 @@ public class UserController {
   }
 
   @PostMapping("/change-author")
-  public ResponseEntity<String> changeAuthor(@RequestBody AuthorRequestDto authorRequestDto) {
+  public ResponseEntity<String> changeAuthor(@RequestBody UserRequestDto userRequestDto) {
 
-    if (null == authorRequestDto.author() || authorRequestDto.author().isEmpty()) {
+    if (null == userRequestDto.author() || userRequestDto.author().isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(NO_PARAM_FROM_REQUEST);
     }
 
-    boolean result = userService.changeAuthor(authorRequestDto.userId(), authorRequestDto.author());
+    boolean result = userService.changeAuthor(userRequestDto.userId(), userRequestDto.author());
     if (result) {
       return ResponseEntity.ok(AUTHOR_UPDATED);
     } else {
