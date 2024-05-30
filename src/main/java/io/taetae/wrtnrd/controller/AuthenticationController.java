@@ -53,6 +53,9 @@ public class AuthenticationController {
     Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
     Cookie refreshTokenCookie = new Cookie("rf", responseDto.refreshToken());
 
+    accessTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setHttpOnly(true);
+
     accessTokenCookie.setPath("/");
     refreshTokenCookie.setPath("/");
 
@@ -62,6 +65,11 @@ public class AuthenticationController {
     User user = responseDto.user();
 
     return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail(), user.getAuthor()));
+  }
+
+  @GetMapping("/check")
+  public void check(HttpServletResponse response) {
+    response.setStatus(HttpServletResponse.SC_OK);
   }
 
   // TODO remove the http-dependent code from service
