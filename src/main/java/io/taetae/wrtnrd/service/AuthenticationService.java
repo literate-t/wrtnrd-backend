@@ -2,6 +2,7 @@ package io.taetae.wrtnrd.service;
 
 import static io.taetae.wrtnrd.enums.RoleEnum.ROLE_USER;
 import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.REVOKE_ALL_PREVIOUS_TOKENS;
 
 import io.taetae.wrtnrd.domain.dto.AuthenticationRequestDto;
 import io.taetae.wrtnrd.domain.dto.AuthenticationResponseDto;
@@ -76,6 +77,7 @@ public class AuthenticationService {
     return new RegisterResponseDto(requestDto.username());
   }
 
+  @Transactional
   public AuthenticationResponseDto authenticate(AuthenticationRequestDto requestDto) {
 
     String username = requestDto.username();
@@ -90,11 +92,15 @@ public class AuthenticationService {
     String accessToken = jwtService.generateAccessToken(findUser);
     String refreshToken = jwtService.generateRefreshToken(findUser);
 
-    revokeAllPreviousUserToken(findUser);
+    boolean result = revokeAllPreviousUserToken(findUser.getId());
 
-    saveUserToken(findUser, accessToken, refreshToken);
-
-    return new AuthenticationResponseDto(findUser, accessToken, refreshToken);
+    if (result) {
+      saveUserToken(findUser, accessToken, refreshToken);
+      return new AuthenticationResponseDto(findUser, accessToken, refreshToken);
+    }
+    else {
+      return null;
+    }
   }
 
   private void saveUserToken(User user, String accessToken, String refreshToken) {
@@ -112,17 +118,23 @@ public class AuthenticationService {
     tokenRepository.save(token);
   }
 
-  private void revokeAllPreviousUserToken(User user) {
+  @Transactional
+  public boolean revokeAllPreviousUserToken(Long userId) {
 
-    List<Token> allTokens = tokenRepository.findAllByUserId(user.getId());
+    try {
+      List<Token> allTokens = tokenRepository.findAllByUserId(userId);
 
-    if (allTokens.isEmpty()) {
-      return;
+      if (allTokens.isEmpty()) {
+        return true;
+      }
+
+      allTokens.forEach(Token::invalidate);
+      log.info(REVOKE_ALL_PREVIOUS_TOKENS);
+      return true;
+    } catch(Exception e) {
+      log.error(e.getMessage());
+      return false;
     }
-
-    allTokens.forEach(Token::invalidate);
-
-    tokenRepository.saveAll(allTokens);
   }
 
   @Transactional
@@ -146,19 +158,25 @@ public class AuthenticationService {
     return responseDto;
   }
 
-  private AuthenticationResponseDto refreshAllToken(String username)
+  @Transactional
+  public AuthenticationResponseDto refreshAllToken(String username)
       throws IOException {
 
     User user = findUser(username);
 
-      revokeAllPreviousUserToken(user);
+      boolean result = revokeAllPreviousUserToken(user.getId());
 
-      String newAccessToken = jwtService.generateAccessToken(user);
-      String newRefreshToken = jwtService.generateRefreshToken(user);
+      if (result) {
+        String newAccessToken = jwtService.generateAccessToken(user);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
 
-      saveUserToken(user, newAccessToken, newRefreshToken);
+        saveUserToken(user, newAccessToken, newRefreshToken);
 
-      return new AuthenticationResponseDto(newAccessToken, newRefreshToken);
+        return new AuthenticationResponseDto(newAccessToken, newRefreshToken);
+      }
+      else {
+        return null;
+      }
   }
 
   private User findUser(String username) {
