@@ -5,6 +5,7 @@ public class Constant {
   // common
   public static final String INTERNAL_SERVER_ERROR = "Internal server error";
   public static final String NO_PARAM_FROM_REQUEST = "Required data is empty";
+  public static final String USER_ID_EMPTY = "User id is empty";
 
   // token
   public static final String ACCESS_TOKEN = "ac";
@@ -22,4 +23,7 @@ public class Constant {
   public static final String AUTHOR_CHECK_FAILURE = "Author check failure";
   public static final String AUTHOR_UPDATED = "Author is updated";
   public static final String AUTHOR_NOT_UPDATED = "Author is not updated";
+
+  // revoke tokens
+  public static final String REVOKE_ALL_PREVIOUS_TOKENS = "revoke all previous user token";
 }
