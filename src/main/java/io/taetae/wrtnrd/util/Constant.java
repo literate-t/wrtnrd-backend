@@ -2,6 +2,10 @@ package io.taetae.wrtnrd.util;
 
 public class Constant {
 
+  // page
+  public static final int PAGE_SIZE = 10;
+  public static final int PAGE_TEST_SIZE = 3;
+
   // common
   public static final String INTERNAL_SERVER_ERROR = "Internal server error";
   public static final String NO_PARAM_FROM_REQUEST = "Required data is empty";
