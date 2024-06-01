@@ -43,4 +43,7 @@ public class Post {
   @OneToMany(cascade = ALL, orphanRemoval = true)
   @JoinColumn(name = "post_id")
   private List<Comment> commentList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "post")
+  private List<PostLike> postLikeList = new ArrayList<>();
 }
