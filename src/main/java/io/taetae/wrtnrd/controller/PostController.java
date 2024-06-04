@@ -33,7 +33,7 @@ public class PostController {
       @RequestParam Integer page,
       @RequestParam(required = false) String userId) {
 
-    Integer nextPage = postService.getNetPage(null != page ? page : 0);
+    Integer nextPage = postService.getNextPage(null != page ? page : 0);
 
     Map<String, Object> response = new HashMap<>();
     List<PostResponseDto> list;

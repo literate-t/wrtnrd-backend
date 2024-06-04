@@ -77,7 +77,7 @@ public class PostService {
         ).toList();
   }
 
-  public @Nullable Integer getNetPage(int pageNumber) {
+  public @Nullable Integer getNextPage(int pageNumber) {
     long count = postRepository.count();
     long pageCount = (long) Math.ceil((double) count / PAGE_TEST_SIZE);
     return pageNumber + 1 <= pageCount ? pageNumber + 1 : null;
