@@ -3,18 +3,21 @@ package io.taetae.wrtnrd.controller;
 import io.taetae.wrtnrd.domain.dto.PostLikeRequestDto;
 import io.taetae.wrtnrd.domain.dto.PostRequestDto;
 import io.taetae.wrtnrd.domain.dto.PostResponseDto;
-import io.taetae.wrtnrd.domain.dto.UserRequestDto;
 import io.taetae.wrtnrd.domain.entity.Post;
 import io.taetae.wrtnrd.service.PostService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -25,17 +28,26 @@ public class PostController {
 
   private final PostService postService;
 
-  @PostMapping("/list")
-  public ResponseEntity<List<PostResponseDto>> getAllPosts(@RequestBody UserRequestDto user) {
+  @GetMapping("/list")
+  public ResponseEntity<Map<String, Object>> getAllPosts(
+      @RequestParam Integer page,
+      @RequestParam(required = false) String userId) {
 
-    if (null == user.userId()) {
-      List<PostResponseDto> list = postService.getPosts();
-      return ResponseEntity.ok(list);
+    Integer nextPage = postService.getNetPage(null != page ? page : 0);
+
+    Map<String, Object> response = new HashMap<>();
+    List<PostResponseDto> list;
+
+    if (null == userId) {
+      list = postService.getPosts(null != page ? page : 0);
+    } else {
+      list = postService.getPostsWithLikes(null != page ? page : 0, Long.parseLong(userId));
     }
 
-    List<PostResponseDto> list = postService.getPostsWithLikes(0, user.userId());
+    response.put("data", list);
+    response.put("nextPage", nextPage);
 
-    return ResponseEntity.ok(list);
+    return ResponseEntity.ok(response);
   }
 
   @Transactional
