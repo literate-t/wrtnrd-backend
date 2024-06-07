@@ -107,4 +107,28 @@ public class PostService {
         )
     ).toList();
   }
+
+  public List<PostResponseDto> getLikeList(int page, Long userId) {
+
+    Page<PostLike> postLikes = postLikeRepository.findAllByUserId(PageRequest.of(page, PAGE_TEST_SIZE), userId);
+    List<Long> postLikeIds = postLikes.getContent().stream().map(post -> post.getPost().getId()).toList();
+    List<Post> posts = postRepository.findAllByIdIn(postLikeIds);
+
+    return posts.stream().map(post -> new PostResponseDto(
+        post.getId(),
+        post.getTitle(),
+        post.getUser().getAuthor(),
+        post.getUser().getDescription(),
+        post.getBody(),
+        post.getCreatedAt(),
+        true
+        )
+    ).toList();
+  }
+
+  public @Nullable Integer getNextLikePostPage(int pageNumber, Long userId) {
+    long count = postLikeRepository.getCountByUserId(userId);
+    long pageCount = (long) Math.ceil((double) count / PAGE_TEST_SIZE);
+    return pageNumber + 1 <= pageCount ? pageNumber + 1 : null;
+  }
 }

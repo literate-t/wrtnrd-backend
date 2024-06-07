@@ -50,6 +50,27 @@ public class PostController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/like-list")
+  public ResponseEntity<Map<String, Object>> getLikeList(
+      @RequestParam Integer page,
+      @RequestParam Long userId
+  ) {
+
+    if (null == userId) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    List<PostResponseDto> list = postService.getLikeList((null != page ? page : 0), userId);
+    Integer nextPage = postService.getNextLikePostPage((null != page ? page : 0), userId);
+
+    Map<String, Object> response = new HashMap<>();
+
+    response.put("data", list);
+    response.put("nextPage", nextPage);
+
+    return ResponseEntity.ok(response);
+  }
+
   @Transactional
   @PostMapping("/new")
   public ResponseEntity<PostResponseDto> post(@RequestBody PostRequestDto postRequestDto) {
