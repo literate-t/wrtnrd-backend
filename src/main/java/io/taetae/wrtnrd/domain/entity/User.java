@@ -42,7 +42,8 @@ public class User implements UserDetails {
   private String description;
   @ToString.Exclude
   @OneToMany(mappedBy = "user", fetch = EAGER)
-  List<UserRole> userRoles = new ArrayList<>();
+  @Builder.Default
+  private List<UserRole> userRoles = new ArrayList<>();
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
