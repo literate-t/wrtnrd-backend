@@ -4,9 +4,7 @@ spring:
   application:
     name: wrtnrd-backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/wrtnrd
-    username: postgres
-    password: postgres
+    url: ${JDBC_URL}
   jpa:
     hibernate:
       ddl-auto: create
@@ -24,7 +22,7 @@ logging:
     org.springframework.security: trace
     root: debug
 jwt:
-  secret-key: 48393d37632532506c37787a22792627435255242b5348535170566666
+  secret-key: ${JWT_SECRET_KEY}
   access-token:
     expiration: 1800000 # 30minutes
   refresh-token:
