@@ -6,6 +6,7 @@ import io.taetae.wrtnrd.jwt.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,6 +26,9 @@ public class SecurityConfig {
 
   private final AuthenticationProvider authenticationProvider;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  @Value("${app.frontend-url}")
+  private String frontendUrl;
 
   @Bean
   SecurityFilterChain apiConfig(HttpSecurity http) throws Exception {
@@ -61,7 +65,7 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
 
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of("http://localhost:3000"));
+    config.setAllowedOrigins(List.of(frontendUrl));
     config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
     config.setAllowedHeaders(List.of("Content-Type"));
     config.setAllowCredentials(true);

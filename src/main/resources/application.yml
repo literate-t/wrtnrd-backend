@@ -27,6 +27,8 @@ jwt:
     expiration: 1800000 # 30minutes
   refresh-token:
     expiration: 7200000 # 2 hours
+app:
+  frontend-url: ${FRONTEND_URL}
 server:
   port: 8000
   tomcat:
