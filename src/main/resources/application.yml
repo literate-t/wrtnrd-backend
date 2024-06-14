@@ -4,7 +4,7 @@ spring:
   application:
     name: wrtnrd-backend
   datasource:
-    url: {{ JDBC_URL }}
+    url: ${JDBC_URL}
   jpa:
     hibernate:
       ddl-auto: create
@@ -22,8 +22,10 @@ logging:
     org.springframework.security: trace
     root: debug
 jwt:
-  secret-key: {{ JWT_SECRET_KEY}}
+  secret-key: ${JWT_SECRET_KEY}
   access-token:
     expiration: 1800000 # 30minutes
   refresh-token:
     expiration: 7200000 # 2 hours
+server:
+  port: 8000
