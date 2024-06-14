@@ -19,8 +19,8 @@ spring:
       enabled: true
 logging:
   level:
-    org.springframework.security: trace
-    root: debug
+    org.springframework.security: info
+    root: info
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   access-token:
