@@ -53,9 +53,10 @@ public class AuthenticationController {
     Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
     Cookie refreshTokenCookie = new Cookie("rf", responseDto.refreshToken());
 
+    accessTokenCookie.setSecure(true);
+    refreshTokenCookie.setSecure(true);
     accessTokenCookie.setHttpOnly(true);
     refreshTokenCookie.setHttpOnly(true);
-
     accessTokenCookie.setPath("/");
     refreshTokenCookie.setPath("/");
 
@@ -82,6 +83,10 @@ public class AuthenticationController {
     Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, responseDto.accessToken());
     Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, responseDto.refreshToken());
 
+    accessTokenCookie.setSecure(true);
+    refreshTokenCookie.setSecure(true);
+    accessTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setHttpOnly(true);
     accessTokenCookie.setPath("/");
     refreshTokenCookie.setPath("/");
 
@@ -93,11 +98,15 @@ public class AuthenticationController {
   public ResponseEntity<String> revokeAllTokens(@RequestBody UserRequestDto userRequestDto, HttpServletRequest request, HttpServletResponse response) {
 
     Util.getCookie(request, ACCESS_TOKEN).ifPresent(cookie -> {
+      cookie.setSecure(true);
+      cookie.setHttpOnly(true);
       cookie.setMaxAge(0);
       cookie.setPath("/");
       response.addCookie(cookie);
     });
     Util.getCookie(request, REFRESH_TOKEN).ifPresent(cookie -> {
+      cookie.setSecure(true);
+      cookie.setHttpOnly(true);
       cookie.setMaxAge(0);
       cookie.setPath("/");
       response.addCookie(cookie);
