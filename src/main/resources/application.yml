@@ -29,3 +29,6 @@ jwt:
     expiration: 7200000 # 2 hours
 server:
   port: 8000
+  tomcat:
+    apr:
+      enabled: false
