@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,6 +105,10 @@ public class AuthenticationController {
   public ResponseEntity<String> revokeAllTokens(@RequestBody UserRequestDto userRequestDto, HttpServletRequest request, HttpServletResponse response) {
 
     Util.invalidateTokenInCookie(request, response);
+
+    if ("/api/auth/logout".equals(request.getRequestURI())) {
+      SecurityContextHolder.clearContext();
+    }
 
     Long userId = userRequestDto.userId();
     if (null == userId) {
