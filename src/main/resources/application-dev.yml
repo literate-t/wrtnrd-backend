@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: wrtnrd-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wrtnrd
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+logging:
+  level:
+    org.springframework.security: trace
+    root: debug
+jwt:
+  secret-key: 48393d37632532506c37787a22792627435255242b5348535170566666
+app:
+  frontend-url: http://localhost:3000
