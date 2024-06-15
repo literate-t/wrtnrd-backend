@@ -1,5 +1,8 @@
 package io.taetae.wrtnrd.util;
 
+import static io.taetae.wrtnrd.util.Constant.ACCESS_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +14,7 @@ import org.apache.coyote.BadRequestException;
 
 public class Util {
 
-  private static ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   public static String checkCookieAndGetValue(HttpServletRequest request, String cookieName)
       throws BadRequestException {
@@ -43,6 +46,23 @@ public class Util {
     }
 
     return Optional.empty();
+  }
+
+  public static void invalidateTokenInCookie(HttpServletRequest request, HttpServletResponse response) {
+    Util.getCookie(request, ACCESS_TOKEN).ifPresent(cookie -> {
+      cookie.setSecure(true);
+      cookie.setHttpOnly(true);
+      cookie.setMaxAge(0);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+    });
+    Util.getCookie(request, REFRESH_TOKEN).ifPresent(cookie -> {
+      cookie.setSecure(true);
+      cookie.setHttpOnly(true);
+      cookie.setMaxAge(0);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+    });
   }
 
   public static void sendResponse(HttpServletResponse response, Object value) throws IOException {

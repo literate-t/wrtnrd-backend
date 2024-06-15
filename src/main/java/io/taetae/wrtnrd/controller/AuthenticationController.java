@@ -97,20 +97,7 @@ public class AuthenticationController {
   @PostMapping("/revoke-all-tokens")
   public ResponseEntity<String> revokeAllTokens(@RequestBody UserRequestDto userRequestDto, HttpServletRequest request, HttpServletResponse response) {
 
-    Util.getCookie(request, ACCESS_TOKEN).ifPresent(cookie -> {
-      cookie.setSecure(true);
-      cookie.setHttpOnly(true);
-      cookie.setMaxAge(0);
-      cookie.setPath("/");
-      response.addCookie(cookie);
-    });
-    Util.getCookie(request, REFRESH_TOKEN).ifPresent(cookie -> {
-      cookie.setSecure(true);
-      cookie.setHttpOnly(true);
-      cookie.setMaxAge(0);
-      cookie.setPath("/");
-      response.addCookie(cookie);
-    });
+    Util.invalidateTokenInCookie(request, response);
 
     Long userId = userRequestDto.userId();
     if (null == userId) {
