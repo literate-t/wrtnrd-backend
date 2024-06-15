@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -46,15 +47,7 @@ public class SecurityConfig {
         .cors((config -> config.configurationSource(corsConfigurationSource())))
         .exceptionHandling(config -> config.authenticationEntryPoint(((request, response, authException) -> {
           response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied: Authentication is required to access this resource.");
-        })))
-// TODO
-//        .logout(config -> config
-//            .addLogoutHandler(null)
-//            .logoutSuccessHandler(
-//                ((request, response, authentication) -> SecurityContextHolder.clearContext()))
-//            .logoutUrl("/api/auth/logout")
-//        )
-        ;
+        })));
 
     http.csrf(AbstractHttpConfigurer::disable);
 
