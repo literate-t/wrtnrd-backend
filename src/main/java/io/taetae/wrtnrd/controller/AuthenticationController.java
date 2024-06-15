@@ -22,6 +22,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,23 +50,28 @@ public class AuthenticationController {
   @PostMapping("/authenticate")
   public ResponseEntity<UserResponseDto> authenticate(HttpServletResponse response, @RequestBody AuthenticationRequestDto requestDto) {
 
-    AuthenticationResponseDto responseDto = authenticationService.authenticate(requestDto);
-    Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
-    Cookie refreshTokenCookie = new Cookie("rf", responseDto.refreshToken());
+    try {
+      AuthenticationResponseDto responseDto = authenticationService.authenticate(requestDto);
+      Cookie accessTokenCookie = new Cookie("ac", responseDto.accessToken());
+      Cookie refreshTokenCookie = new Cookie("rf", responseDto.refreshToken());
 
-    accessTokenCookie.setSecure(true);
-    refreshTokenCookie.setSecure(true);
-    accessTokenCookie.setHttpOnly(true);
-    refreshTokenCookie.setHttpOnly(true);
-    accessTokenCookie.setPath("/");
-    refreshTokenCookie.setPath("/");
+      accessTokenCookie.setSecure(true);
+      refreshTokenCookie.setSecure(true);
+      accessTokenCookie.setHttpOnly(true);
+      refreshTokenCookie.setHttpOnly(true);
+      accessTokenCookie.setPath("/");
+      refreshTokenCookie.setPath("/");
 
-    response.addCookie(accessTokenCookie);
-    response.addCookie(refreshTokenCookie);
+      response.addCookie(accessTokenCookie);
+      response.addCookie(refreshTokenCookie);
 
-    User user = responseDto.user();
+      User user = responseDto.user();
 
-    return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail(), user.getAuthor()));
+      return ResponseEntity.ok(new UserResponseDto(user.getId(), user.getEmail(), user.getAuthor()));
+    } catch(AuthenticationException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
   }
 
   @GetMapping("/check")
@@ -94,7 +100,7 @@ public class AuthenticationController {
     response.addCookie(refreshTokenCookie);
   }
 
-  @PostMapping("/revoke-all-tokens")
+  @PostMapping(value={"/logout", "/revoke-all-tokens"})
   public ResponseEntity<String> revokeAllTokens(@RequestBody UserRequestDto userRequestDto, HttpServletRequest request, HttpServletResponse response) {
 
     Util.invalidateTokenInCookie(request, response);
