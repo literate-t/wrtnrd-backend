@@ -5,7 +5,7 @@ spring:
     url: ${JDBC_URL}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
