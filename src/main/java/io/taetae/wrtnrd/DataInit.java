@@ -76,7 +76,7 @@ public class DataInit {
     }
   }
 
-  @Profile("prd")
+  @Profile("prod")
   @EventListener(ApplicationReadyEvent.class)
   public void roleInit() {
     log.info("Role data init");
