@@ -13,12 +13,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Slf4j
 @RequiredArgsConstructor
-public class TestDataInit {
+public class DataInit {
 
   private final RoleRepository roleRepository;
   private final UserRepository userRepository;
@@ -26,6 +27,7 @@ public class TestDataInit {
   private final PostRepository postRepository;
   private final PasswordEncoder passwordEncoder;
 
+  @Profile("dev")
   @EventListener(ApplicationReadyEvent.class)
   public void init() {
 
@@ -33,7 +35,7 @@ public class TestDataInit {
 
     Role role = Role.create("ROLE_USER", "USER");
     roleRepository.save(Role.create("ROLE_ADMIN", "ADMIN"));
-    roleRepository.save(Role.create("ROLE_MANAGER", "MANGER"));
+    roleRepository.save(Role.create("ROLE_MANAGER", "MANAGER"));
     roleRepository.save(role);
 
     UserRole userRole = UserRole.create(role);
@@ -72,5 +74,16 @@ public class TestDataInit {
 
       postRepository.save(newPost);
     }
+  }
+
+  @Profile("prd")
+  @EventListener(ApplicationReadyEvent.class)
+  public void roleInit() {
+    log.info("Role data init");
+
+    Role role = Role.create("ROLE_USER", "USER");
+    roleRepository.save(Role.create("ROLE_ADMIN", "ADMIN"));
+    roleRepository.save(Role.create("ROLE_MANAGER", "MANAGER"));
+    roleRepository.save(role);
   }
 }
