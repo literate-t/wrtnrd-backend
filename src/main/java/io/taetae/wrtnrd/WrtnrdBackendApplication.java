@@ -7,7 +7,6 @@ import io.taetae.wrtnrd.repository.UserRoleRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
@@ -18,7 +17,6 @@ public class WrtnrdBackendApplication {
   }
 
   @Bean
-  @Profile("prod")
   public DataInit dataInit(RoleRepository repository, UserRepository userRepository, UserRoleRepository userRoleRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
     return new DataInit(repository, userRepository, userRoleRepository, postRepository, passwordEncoder);
   }
