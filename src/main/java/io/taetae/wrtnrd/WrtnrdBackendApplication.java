@@ -19,7 +19,13 @@ public class WrtnrdBackendApplication {
 
   @Bean
   @Profile("prod")
-  public DataInit dataInit(RoleRepository repository, UserRepository userRepository, UserRoleRepository userRoleRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
-    return new DataInit(repository, userRepository, userRoleRepository, postRepository, passwordEncoder);
+  public DataInit dataInit(RoleRepository roleRepository) {
+    return new DataInit(roleRepository);
+  }
+
+  @Bean
+  @Profile("dev")
+  public TestDataInit testDataInit(RoleRepository repository, UserRepository userRepository, UserRoleRepository userRoleRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
+    return new TestDataInit(repository, userRepository, userRoleRepository, postRepository, passwordEncoder);
   }
 }
