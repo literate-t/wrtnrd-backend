@@ -1,7 +1,6 @@
 package io.taetae.wrtnrd.service;
 
 import static io.taetae.wrtnrd.enums.RoleEnum.ROLE_USER;
-import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
 import static io.taetae.wrtnrd.util.Constant.REVOKE_ALL_PREVIOUS_TOKENS;
 
 import io.taetae.wrtnrd.domain.dto.AuthenticationRequestDto;
@@ -12,22 +11,19 @@ import io.taetae.wrtnrd.domain.entity.Role;
 import io.taetae.wrtnrd.domain.entity.Token;
 import io.taetae.wrtnrd.domain.entity.User;
 import io.taetae.wrtnrd.domain.entity.UserRole;
-import io.taetae.wrtnrd.jwt.JwtService;
+import io.taetae.wrtnrd.filter.jwt.JwtService;
 import io.taetae.wrtnrd.repository.RoleRepository;
 import io.taetae.wrtnrd.repository.TokenRepository;
 import io.taetae.wrtnrd.repository.UserRepository;
 import io.taetae.wrtnrd.repository.UserRoleRepository;
-import io.taetae.wrtnrd.util.Util;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -138,24 +134,18 @@ public class AuthenticationService {
   }
 
   @Transactional
-  public AuthenticationResponseDto refreshToken(HttpServletRequest request, HttpServletResponse response)
+  public AuthenticationResponseDto createNewTokens(String jwt)
       throws IOException {
-    AuthenticationResponseDto responseDto = null;
 
     try {
-      String refreshToken = Util.checkCookieAndGetValue(request, REFRESH_TOKEN);
+      String username = jwtService.extractUsername(jwt);
+      AuthenticationResponseDto dto = refreshAllToken(username);
+      log.info("Token refresh successful: {}, {}, {}", username, dto.accessToken(), dto.refreshToken());
 
-      // if token is expired, is throws an exception
-      String username = jwtService.extractUsername(refreshToken);
-
-      if (null != username) {
-        responseDto = refreshAllToken(username);
-      }
-    } catch (BadRequestException e) {
-      Util.sendResponse(response, ResponseEntity.badRequest());
+      return dto;
+    } catch (AuthenticationException e) {
+      return null;
     }
-
-    return responseDto;
   }
 
   @Transactional
