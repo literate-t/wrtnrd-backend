@@ -16,7 +16,7 @@ import static io.taetae.wrtnrd.util.Constant.USER_NOT_FOUND_FROM_ACCESS_TOKEN;
 import io.taetae.wrtnrd.domain.dto.UserRequestDto;
 import io.taetae.wrtnrd.domain.dto.PasswordChangeDto;
 import io.taetae.wrtnrd.domain.dto.PasswordCheckDto;
-import io.taetae.wrtnrd.jwt.JwtService;
+import io.taetae.wrtnrd.filter.jwt.JwtService;
 import io.taetae.wrtnrd.service.UserService;
 import io.taetae.wrtnrd.util.Util;
 import jakarta.servlet.http.Cookie;
