@@ -1,10 +1,13 @@
-package io.taetae.wrtnrd.jwt;
+package io.taetae.wrtnrd.filter.jwt;
 
 import static io.jsonwebtoken.Jwts.builder;
 import static io.jsonwebtoken.Jwts.parserBuilder;
+import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.TOKEN_TYPE;
 import static java.lang.System.currentTimeMillis;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.taetae.wrtnrd.repository.TokenRepository;
@@ -52,6 +55,19 @@ public class JwtService {
         .getBody();
   }
 
+  private Claims extractAllClaimsForException(String token) {
+
+    try {
+      return parserBuilder()
+          .setSigningKey(getSignInKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch(ExpiredJwtException e) {
+      return e.getClaims();
+    }
+  }
+
   public String extractUsername(String token) {
 
     return extractClaim(token, Claims::getSubject);
@@ -60,6 +76,15 @@ public class JwtService {
   public Date extractExpiration(String token) {
 
     return extractClaim(token, Claims::getExpiration);
+  }
+
+  public String extractIsRefreshClaim(String token) {
+    final Claims claims = extractAllClaimsForException(token);
+    try {
+      return claims.get(TOKEN_TYPE, String.class);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public String generateAccessToken(UserDetails userDetails) {
@@ -73,8 +98,10 @@ public class JwtService {
   }
 
   public String generateRefreshToken(UserDetails userDetails) {
+    Map<String, Object> extraClaims = new HashMap<>();
+    extraClaims.put(TOKEN_TYPE, REFRESH_TOKEN);
 
-    return generateRefreshToken(new HashMap<>(), userDetails);
+    return generateRefreshToken(extraClaims, userDetails);
   }
 
   public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -111,17 +138,13 @@ public class JwtService {
 
   public boolean isAccessTokenValid(String accessToken, UserDetails user) {
 
-    boolean isStoredAccessValid = tokenRepository.findFirstByAccessToken(accessToken)
+    return tokenRepository.findFirstByAccessToken(accessToken)
         .map(token -> !token.isAccessExpired() && !token.isAccessRevoked()).orElse(false);
-
-    return isStoredAccessValid && isTokenValid(accessToken, user);
   }
 
   public boolean isRefreshTokenValid(String refreshToken, UserDetails user) {
 
-    boolean isStoredRefreshValid = tokenRepository.findFirstByRefreshToken(refreshToken)
+    return tokenRepository.findFirstByRefreshToken(refreshToken)
         .map(token -> !token.isRefreshExpired() && !token.isRefreshRevoked()).orElse(false);
-
-    return isStoredRefreshValid && isTokenValid(refreshToken, user);
   }
 }
