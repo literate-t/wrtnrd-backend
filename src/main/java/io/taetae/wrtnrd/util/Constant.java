@@ -12,8 +12,10 @@ public class Constant {
   public static final String USER_ID_EMPTY = "User id is empty";
 
   // token
+  public static final Integer BEARER_BEGIN_INDEX = 7;
   public static final String ACCESS_TOKEN = "ac";
   public static final String REFRESH_TOKEN = "rf";
+  public static final String TOKEN_TYPE = "tty";
 
   // mypage-password
   public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully";
