@@ -1,6 +1,7 @@
 package io.taetae.wrtnrd.util;
 
 import static io.taetae.wrtnrd.util.Constant.ACCESS_TOKEN;
+import static io.taetae.wrtnrd.util.Constant.BEARER_BEGIN_INDEX;
 import static io.taetae.wrtnrd.util.Constant.REFRESH_TOKEN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,5 +77,9 @@ public class Util {
     }
 
     return first.equals(second);
+  }
+
+  public static String getBearerToken(String authorization) {
+    return null == authorization ? "" : authorization.substring(BEARER_BEGIN_INDEX);
   }
 }
