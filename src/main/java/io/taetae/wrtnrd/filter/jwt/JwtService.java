@@ -136,13 +136,13 @@ public class JwtService {
     return customUserDetailsService.loadUserByUsername(userEmail);
   }
 
-  public boolean isAccessTokenValid(String accessToken, UserDetails user) {
+  public boolean isAccessTokenValid(String accessToken) {
 
     return tokenRepository.findFirstByAccessToken(accessToken)
         .map(token -> !token.isAccessExpired() && !token.isAccessRevoked()).orElse(false);
   }
 
-  public boolean isRefreshTokenValid(String refreshToken, UserDetails user) {
+  public boolean isRefreshTokenValid(String refreshToken) {
 
     return tokenRepository.findFirstByRefreshToken(refreshToken)
         .map(token -> !token.isRefreshExpired() && !token.isRefreshRevoked()).orElse(false);

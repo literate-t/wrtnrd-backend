@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     UserDetails user = jwtService.loadUserDetails(userEmail);
 
-    if (jwtService.isAccessTokenValid(token, user) || jwtService.isRefreshTokenValid(token, user)) {
+    if (jwtService.isAccessTokenValid(token) || jwtService.isRefreshTokenValid(token)) {
       setAuthenticationContext(request, user);
     }
   }
