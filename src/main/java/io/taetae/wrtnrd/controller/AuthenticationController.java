@@ -24,11 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RequiredArgsConstructor
@@ -60,7 +56,18 @@ public class AuthenticationController {
     } catch(AuthenticationException e) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+  }
 
+  @GetMapping("/verify-access-token")
+  public ResponseEntity<Void> verifyAccessToken(@RequestHeader(AUTHORIZATION) String authHeader)
+  {
+    String jwt = Util.getBearerToken(authHeader);
+
+    boolean valid = authenticationService.verifyAccessToken(jwt);
+
+    return valid
+            ? ResponseEntity.status(HttpStatus.OK).build()
+            : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 
   @GetMapping("/check")

@@ -99,6 +99,12 @@ public class AuthenticationService {
     }
   }
 
+  @Transactional
+  public boolean verifyAccessToken(String accessToken)
+  {
+    return jwtService.isAccessTokenValid(accessToken);
+  }
+
   private void saveUserToken(User user, String accessToken, String refreshToken) {
 
     Token token = Token.builder()
@@ -175,7 +181,7 @@ public class AuthenticationService {
 
   private boolean isRefreshTokenValid(String refreshToken, UserDetails user) {
 
-    return jwtService.isRefreshTokenValid(refreshToken, user);
+    return jwtService.isRefreshTokenValid(refreshToken);
   }
 
   public boolean isDuplicateEmail(String email) {
